@@ -5,7 +5,7 @@
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>pure-rewriter</artifactId>
 	<name>Pure rewriter</name>
-	<version>1.0.beta5-SNAPSHOT</version>
+	<version>1.0.beta5</version>
 	<packaging>jar</packaging>
 
         <url>http://graphik-team.github.io/graal/pure</url>
