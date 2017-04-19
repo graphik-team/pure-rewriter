@@ -26,10 +26,10 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.HierarchicalCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.IDCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
-import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.core.compilation.HierarchicalCompilation;
+import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.Prefix;
 

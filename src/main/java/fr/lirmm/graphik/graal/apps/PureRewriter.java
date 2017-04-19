@@ -21,7 +21,8 @@ import com.beust.jcommander.ParameterException;
 
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.Apps;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.profiler.CPUTimeProfiler;
+import fr.lirmm.graphik.util.profiler.Profiler;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -76,7 +77,7 @@ public class PureRewriter {
 		}
 
 		if (options.verbose) {
-			profiler = new Profiler(System.err);
+			profiler = new CPUTimeProfiler(System.err);
 			cmdCompile.enableVerbose(true);
 			cmdRewrite.enableVerbose(true);
 			cmdUnfold.enableVerbose(true);

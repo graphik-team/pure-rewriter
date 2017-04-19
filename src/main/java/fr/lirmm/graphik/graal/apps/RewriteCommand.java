@@ -18,7 +18,6 @@ package fr.lirmm.graphik.graal.apps;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,16 +27,21 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.BasicAggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
-import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.core.stream.filter.ConjunctiveQueryFilter;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
@@ -128,15 +132,16 @@ class RewriteCommand extends PureCommand {
 	}
 	
 	private void processQuery(RuleSet rules, RulesCompilation compilation, RewritingOperator operator)
-			throws FileNotFoundException {
+			throws FileNotFoundException, IteratorException {
 		List<ConjunctiveQuery> queries = new LinkedList<ConjunctiveQuery>();
 		File file = new File(this.query);
 		if (file.exists()) {
-			Iterator<ConjunctiveQuery> it = new FilterIterator<Object, ConjunctiveQuery>(
-					new DlgpParser(file), new ConjunctiveQueryFilter());
+			CloseableIterator<ConjunctiveQuery> it = new FilterIterator<Object, ConjunctiveQuery>(
+					new DlgpParser(file), ConjunctiveQueryFilter.instance());
 			while (it.hasNext()) {
 				queries.add(it.next());
 			}
+			it.close();
 		} else {
 			queries.add(DlgpParser.parseQuery(this.query));
 		}
@@ -144,23 +149,20 @@ class RewriteCommand extends PureCommand {
 		for (ConjunctiveQuery query : queries) {
 			if (this.isVerbose()) {
 				this.getProfiler().clear();
-				this.getProfiler().add("Initial query", query);
+				this.getProfiler().put("Initial query", query);
 			}
-			fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter bc = new fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter(
-					query, rules, compilation, operator);
+			fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter bc = new fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter(operator, this.isUnfoldingEnable);
 
 			if (this.isVerbose()) {
 				bc.setProfiler(this.getProfiler());
-				bc.enableVerbose(true);
 			}
 			
-			bc.enableUnfolding(this.isUnfoldingEnable);
-
 			try {
 				writer.writeComment("rewrite of: "
 						+ DlgpWriter.writeToString(query).replace("\n", ""));
-				while (bc.hasNext()) {
-					writer.write(bc.next());
+				CloseableIteratorWithoutException<ConjunctiveQuery> execute = bc.execute(query, rules, compilation);
+				while (execute.hasNext()) {
+					writer.write(execute.next());
 				}
 			} catch (IOException e) {
 			}

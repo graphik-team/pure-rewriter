@@ -26,11 +26,14 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.stream.CloseableIterableAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -82,12 +85,12 @@ public class UnfoldCommand extends PureCommand {
 
 		List<ConjunctiveQuery> queries = Util.parseQueries(this.queriesString);
 
-		Iterable<ConjunctiveQuery> unfold = onto.getRight().unfold(queries);
+		CloseableIteratorWithoutException<ConjunctiveQuery> unfold = PureRewriter.unfold(new CloseableIterableAdapter<ConjunctiveQuery>(queries), onto.getRight());
 
 		// display
 		writer.write(onto.getLeft());
-		for (ConjunctiveQuery q : unfold) {
-			writer.write(q);
+		while(unfold.hasNext()) {
+			writer.write(unfold.next());
 		}
 		writer.close();
 

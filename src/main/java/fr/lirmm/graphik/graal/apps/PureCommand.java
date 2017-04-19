@@ -15,15 +15,14 @@
  */
 package fr.lirmm.graphik.graal.apps;
 
-import fr.lirmm.graphik.util.Profilable;
-import fr.lirmm.graphik.util.Profiler;
-import fr.lirmm.graphik.util.Verbosable;
+import fr.lirmm.graphik.util.profiler.Profilable;
+import fr.lirmm.graphik.util.profiler.Profiler;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class PureCommand implements Verbosable, Profilable {
+public abstract class PureCommand implements Profilable {
 
 	private Profiler profiler = null;
 	private boolean isVerbose = false;
@@ -38,7 +37,6 @@ public abstract class PureCommand implements Verbosable, Profilable {
 		return this.profiler;
 	}
 
-	@Override
 	public void enableVerbose(boolean enable) {
 		this.isVerbose = enable;
 	}
