@@ -118,7 +118,7 @@ final class Util {
 			compilationName = CompileCommand.HIERACHICAL_COMPILATION_NAME;
 		}
 
-		writer.writeDirective(new Directive(Directive.Type.COMMENT,
+		writer.write(new Directive(Directive.Type.COMMENT,
 				compilationName));
 
 		for (Rule r : compilation.getSaturation()) {

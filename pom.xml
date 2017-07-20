@@ -6,15 +6,15 @@
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>pure-rewriter</artifactId>
 	<name>Pure rewriter</name>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<packaging>jar</packaging>
 
 	<url>http://graphik-team.github.io/graal/pure</url>
 
 	<properties>
-		<graal.version>1.3.0-SNAPSHOT</graal.version>
+		<graal.version>1.3.0</graal.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
+		<jdk.version>1.7</jdk.version>
 	</properties>
 
 	<scm>
